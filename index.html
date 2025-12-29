@@ -8,9 +8,10 @@
 </head>
 <body>
     <h1 id="heading">Rock Paper Scissors Game</h1>
+
     <div class="choices">
         <div class="choice" id="rock">
-            <img src="./images/rock.png" alt="Stone">
+            <img src="./images/rock.png" alt="Rock">
         </div>
         <div class="choice" id="paper">
             <img src="./images/paper.png" alt="Paper">
@@ -19,18 +20,41 @@
             <img src="./images/scissor.png" alt="Scissors">
         </div>
     </div>
+
+    <!-- Choice Display -->
+    <div class="choices-display">
+        <p>You chose: <span id="user-choice">-</span></p>
+        <p>Computer chose: <span id="comp-choice">-</span></p>
+    </div>
+
     <div class="score-board">
         <div class="score">
-            <p id="user-score">0</p>
             <p>You</p>
+            <p class="score-number" id="user-score">0</p>
         </div>
+        <div class="vs">:</div>
         <div class="score">
-            <p id="computer-score">0</p>
             <p>Computer</p>
+            <p class="score-number" id="computer-score">0</p>
+        </div>
     </div>
+
+    <div class="msg-container">
+        <p id="msg">Play Your Move!</p>
     </div>
-    <div class="msg container">
-        <p id="msg">Play Your Move</p>
+
+    <!-- Final Winner Button -->
+    <div class="winner-button-container">
+        <button id="final-winner-btn" class="final-winner-btn" disabled>
+            Show Final Winner
+        </button>
     </div>
+
+    <!-- Reset Button -->
+    <div class="reset-container">
+        <button id="reset-btn" class="reset-btn">Play Again (Reset Game)</button>
+    </div>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
