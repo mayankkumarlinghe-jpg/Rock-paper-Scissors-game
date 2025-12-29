@@ -1,109 +1,184 @@
-// Game state
-let userScore = 0;
-let computerScore = 0;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-// DOM elements
-const choices = document.querySelectorAll('.choice');
-const msgElement = document.getElementById('msg');
-const userScoreElement = document.getElementById('user-score');
-const computerScoreElement = document.getElementById('computer-score');
-const userChoiceDisplay = document.getElementById('user-choice');     // Optional: add these in HTML
-const computerChoiceDisplay = document.getElementById('comp-choice'); // for better visuals
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    min-height: 100vh;
+    color: white;
+}
 
-// Possible choices
-const OPTIONS = ['rock', 'paper', 'scissors'];
+h1#heading {
+    background-color: #081b31;
+    height: 5rem;
+    line-height: 5rem;
+    text-align: center;
+    font-size: 2.5rem;
+    letter-spacing: 1px;
+}
 
-// Generate computer's choice
-const getComputerChoice = () => {
-    const randomIndex = Math.floor(Math.random() * 3);
-    return OPTIONS[randomIndex];
-};
+.choices {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 5rem;
+}
 
-// Determine winner
-const determineWinner = (user, computer) => {
-    if (user === computer) return 'tie';
-    
-    if (
-        (user === 'rock' && computer === 'scissors') ||
-        (user === 'paper' && computer === 'rock') ||
-        (user === 'scissors' && computer === 'paper')
-    ) {
-        return 'user';
-    }
-    return 'computer';
-};
+.choice {
+    height: 260px;
+    width: 260px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
 
-// Update UI with result
-const showResult = (userChoice, computerChoice, winner) => {
-    // Update choice visuals (optional but recommended)
-    if (userChoiceDisplay) userChoiceDisplay.textContent = formatChoice(userChoice);
-    if (computerChoiceDisplay) computerChoiceDisplay.textContent = formatChoice(computerChoice);
+.choice:hover {
+    transform: scale(1.15);
+    background: rgba(255, 255, 255, 0.2);
+}
 
-    // Highlight chosen options
-    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-    document.getElementById(userChoice).classList.add('selected');
+.choice.clicked {
+    transform: scale(0.95);
+}
 
-    // Update message and scores
-    let message = '';
-    let messageClass = '';
+.choice.selected {
+    box-shadow: 0 0 30px 8px gold;
+    border: 5px solid gold;
+    background: rgba(255, 215, 0, 0.2);
+}
 
-    switch (winner) {
-        case 'tie':
-            message = `It's a Tie! Both chose ${formatChoice(userChoice)}.`;
-            messageClass = 'tie';
-            break;
-        case 'user':
-            message = `You Win! ${formatChoice(userChoice)} beats ${formatChoice(computerChoice)}.`;
-            userScore++;
-            userScoreElement.textContent = userScore;
-            messageClass = 'win';
-            break;
-        case 'computer':
-            message = `Computer Wins! ${formatChoice(computerChoice)} beats ${formatChoice(userChoice)}.`;
-            computerScore++;
-            computerScoreElement.textContent = computerScore;
-            messageClass = 'lose';
-            break;
-    }
+.choice img {
+    height: 180px;
+    width: 180px;
+    object-fit: contain;
+    border-radius: 1rem;
+}
 
-    msgElement.textContent = message;
-    msgElement.className = messageClass; // Allows different styling for win/tie/lose
-};
+.choices-display {
+    text-align: center;
+    margin: 2rem 0;
+    font-size: 1.4rem;
+    opacity: 0.9;
+}
 
-// Helper to capitalize choice
-const formatChoice = (choice) => {
-    return choice.charAt(0).toUpperCase() + choice.slice(1);
-};
+.score-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+    margin-top: 1rem;
+    font-size: 1.8rem;
+}
 
-// Main game function
-const playGame = (userChoice) => {
-    console.log("User choice:", userChoice);
-    
-    const computerChoice = getComputerChoice();
-    console.log("Computer choice:", computerChoice);
-    
-    const winner = determineWinner(userChoice, computerChoice);
-    showResult(userChoice, computerChoice, winner);
-};
+.score {
+    text-align: center;
+}
 
-// Add click listeners to choices
-choices.forEach((choice) => {
-    choice.addEventListener('click', () => {
-        const choiceID = choice.getAttribute('id');
-        
-        // Add animation feedback
-        choice.classList.add('clicked');
-        setTimeout(() => choice.classList.remove('clicked'), 300);
-        
-        playGame(choiceID);
-    });
-});
+.score-number {
+    font-size: 4.5rem;
+    font-weight: bold;
+    color: #ffeb3b;
+}
 
-// Optional: Add keyboard support
-document.addEventListener('keydown', (e) => {
-    const keyMap = { 'r': 'rock', 'p': 'paper', 's': 'scissors' };
-    const choice = keyMap[e.key.toLowerCase()];
-    if (choice) {
-        document.getElementById(choice)?.click();
-    }
-});
+.vs {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.msg-container {
+    text-align: center;
+    margin: 3rem auto;
+    max-width: 800px;
+}
+
+#msg {
+    background-color: #081b31;
+    display: inline-block;
+    padding: 1.2rem 2.5rem;
+    border-radius: 50px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.4s ease;
+}
+
+#msg.win {
+    background: linear-gradient(45deg, #4caf50, #8bc34a);
+    color: white;
+}
+
+#msg.lose {
+    background: linear-gradient(45deg, #f44336, #e91e63);
+    color: white;
+}
+
+#msg.tie {
+    background: linear-gradient(45deg, #ff9800, #ffc107);
+    color: #081b31;
+}
+
+#msg.final-winner {
+    font-size: 2.5rem;
+    padding: 2rem 4rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 4px solid gold;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+}
+
+.winner-button-container {
+    text-align: center;
+    margin: 2.5rem 0;
+}
+
+.final-winner-btn {
+    padding: 14px 40px;
+    font-size: 1.4rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.final-winner-btn:hover:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+}
+
+.final-winner-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.reset-container {
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.reset-btn {
+    padding: 12px 30px;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.reset-btn:hover {
+    background: #2980b9;
+}
