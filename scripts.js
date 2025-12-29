@@ -1,184 +1,147 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+// Game state
+let userScore = 0;
+let computerScore = 0;
+let totalRounds = 0;
 
-body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #1e3c72, #2a5298);
-    min-height: 100vh;
-    color: white;
-}
+const MIN_ROUNDS_FOR_WINNER = 3;
 
-h1#heading {
-    background-color: #081b31;
-    height: 5rem;
-    line-height: 5rem;
-    text-align: center;
-    font-size: 2.5rem;
-    letter-spacing: 1px;
-}
+// DOM Elements
+const choices = document.querySelectorAll('.choice');
+const msgElement = document.getElementById('msg');
+const userScoreElement = document.getElementById('user-score');
+const computerScoreElement = document.getElementById('computer-score');
+const userChoiceDisplay = document.getElementById('user-choice');
+const computerChoiceDisplay = document.getElementById('comp-choice');
+const finalWinnerBtn = document.getElementById('final-winner-btn');
+const resetBtn = document.getElementById('reset-btn');
 
-.choices {
-    display: flex;
-    justify-content: center;
-    gap: 3rem;
-    margin-top: 5rem;
-}
+const OPTIONS = ['rock', 'paper', 'scissors'];
 
-.choice {
-    height: 260px;
-    width: 260px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
+// Computer choice
+const getComputerChoice = () => {
+    const randomIndex = Math.floor(Math.random() * OPTIONS.length);
+    return OPTIONS[randomIndex];
+};
 
-.choice:hover {
-    transform: scale(1.15);
-    background: rgba(255, 255, 255, 0.2);
-}
+// Determine winner
+const determineWinner = (user, computer) => {
+    if (user === computer) return 'tie';
+    if (
+        (user === 'rock' && computer === 'scissors') ||
+        (user === 'paper' && computer === 'rock') ||
+        (user === 'scissors' && computer === 'paper')
+    ) {
+        return 'user';
+    }
+    return 'computer';
+};
 
-.choice.clicked {
-    transform: scale(0.95);
-}
+// Format choice name
+const formatChoice = (choice) => {
+    return choice.charAt(0).toUpperCase() + choice.slice(1);
+};
 
-.choice.selected {
-    box-shadow: 0 0 30px 8px gold;
-    border: 5px solid gold;
-    background: rgba(255, 215, 0, 0.2);
-}
+// Show result
+const showResult = (userChoice, computerChoice, winner) => {
+    // Update choice displays
+    userChoiceDisplay.textContent = formatChoice(userChoice);
+    computerChoiceDisplay.textContent = formatChoice(computerChoice);
 
-.choice img {
-    height: 180px;
-    width: 180px;
-    object-fit: contain;
-    border-radius: 1rem;
-}
+    // Highlight selected choice
+    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+    document.getElementById(userChoice).classList.add('selected');
 
-.choices-display {
-    text-align: center;
-    margin: 2rem 0;
-    font-size: 1.4rem;
-    opacity: 0.9;
-}
+    // Update message
+    let message = '';
+    let messageClass = '';
 
-.score-board {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5rem;
-    margin-top: 1rem;
-    font-size: 1.8rem;
-}
+    switch (winner) {
+        case 'tie':
+            message = `It's a Tie! Both chose ${formatChoice(userChoice)}.`;
+            messageClass = 'tie';
+            break;
+        case 'user':
+            message = `You Win! ${formatChoice(userChoice)} beats ${formatChoice(computerChoice)}.`;
+            userScore++;
+            userScoreElement.textContent = userScore;
+            messageClass = 'win';
+            break;
+        case 'computer':
+            message = `Computer Wins! ${formatChoice(computerChoice)} beats ${formatChoice(userChoice)}.`;
+            computerScore++;
+            computerScoreElement.textContent = computerScore;
+            messageClass = 'lose';
+            break;
+    }
 
-.score {
-    text-align: center;
-}
+    msgElement.textContent = message;
+    msgElement.className = messageClass;
+};
 
-.score-number {
-    font-size: 4.5rem;
-    font-weight: bold;
-    color: #ffeb3b;
-}
+// Main game
+const playGame = (userChoice) => {
+    const computerChoice = getComputerChoice();
+    const winner = determineWinner(userChoice, computerChoice);
 
-.vs {
-    font-size: 3rem;
-    font-weight: bold;
-    color: #fff;
-}
+    totalRounds++;
 
-.msg-container {
-    text-align: center;
-    margin: 3rem auto;
-    max-width: 800px;
-}
+    // Enable final winner button after minimum rounds
+    if (totalRounds >= MIN_ROUNDS_FOR_WINNER) {
+        finalWinnerBtn.disabled = false;
+    }
 
-#msg {
-    background-color: #081b31;
-    display: inline-block;
-    padding: 1.2rem 2.5rem;
-    border-radius: 50px;
-    font-size: 1.8rem;
-    font-weight: bold;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    transition: all 0.4s ease;
-}
+    showResult(userChoice, computerChoice, winner);
+};
 
-#msg.win {
-    background: linear-gradient(45deg, #4caf50, #8bc34a);
-    color: white;
-}
+// Event Listeners
+choices.forEach(choice => {
+    choice.addEventListener('click', () => {
+        const choiceID = choice.getAttribute('id');
 
-#msg.lose {
-    background: linear-gradient(45deg, #f44336, #e91e63);
-    color: white;
-}
+        // Click animation
+        choice.classList.add('clicked');
+        setTimeout(() => choice.classList.remove('clicked'), 300);
 
-#msg.tie {
-    background: linear-gradient(45deg, #ff9800, #ffc107);
-    color: #081b31;
-}
+        playGame(choiceID);
+    });
+});
 
-#msg.final-winner {
-    font-size: 2.5rem;
-    padding: 2rem 4rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    border: 4px solid gold;
-    box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
-}
+// Final Winner Button
+finalWinnerBtn.addEventListener('click', () => {
+    let finalMessage = '';
+    const crown = '👑';
 
-.winner-button-container {
-    text-align: center;
-    margin: 2.5rem 0;
-}
+    if (userScore > computerScore) {
+        finalMessage = `${crown} YOU ARE THE CHAMPION! ${crown}<br>Final Score: ${userScore} - ${computerScore}`;
+    } else if (computerScore > userScore) {
+        finalMessage = `Computer is the Champion... ${crown}<br>Final Score: ${userScore} - ${computerScore}`;
+    } else {
+        finalMessage = `It's a Perfect Tie! 🤝<br>Final Score: ${userScore} - ${computerScore}`;
+    }
 
-.final-winner-btn {
-    padding: 14px 40px;
-    font-size: 1.4rem;
-    font-weight: bold;
-    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s;
-}
+    msgElement.innerHTML = finalMessage;
+    msgElement.classList.add('final-winner');
 
-.final-winner-btn:hover:not(:disabled) {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-}
+    finalWinnerBtn.disabled = true;
+    finalWinnerBtn.textContent = "Winner Declared!";
+});
 
-.final-winner-btn:disabled {
-    background: #666;
-    cursor: not-allowed;
-    transform: none;
-}
+// Reset Game
+resetBtn.addEventListener('click', () => {
+    userScore = 0;
+    computerScore = 0;
+    totalRounds = 0;
 
-.reset-container {
-    text-align: center;
-    margin: 1.5rem 0;
-}
+    userScoreElement.textContent = '0';
+    computerScoreElement.textContent = '0';
+    userChoiceDisplay.textContent = '-';
+    computerChoiceDisplay.textContent = '-';
 
-.reset-btn {
-    padding: 12px 30px;
-    background: #3498db;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background 0.3s;
-}
+    msgElement.textContent = 'Play Your Move!';
+    msgElement.className = '';
 
-.reset-btn:hover {
-    background: #2980b9;
-}
+    finalWinnerBtn.disabled = true;
+    finalWinnerBtn.textContent = 'Show Final Winner';
+
+    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+});
