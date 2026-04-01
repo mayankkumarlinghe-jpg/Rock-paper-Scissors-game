@@ -2,6 +2,7 @@
 let userScore = 0;
 let computerScore = 0;
 let totalRounds = 0;
+let bestScore = parseInt(localStorage.getItem('rpsBestScore')) || 0;
 
 const MIN_ROUNDS_FOR_WINNER = 3;
 
@@ -10,10 +11,14 @@ const choices = document.querySelectorAll('.choice');
 const msgElement = document.getElementById('msg');
 const userScoreElement = document.getElementById('user-score');
 const computerScoreElement = document.getElementById('computer-score');
+const bestScoreElement = document.getElementById('best-score');
 const userChoiceDisplay = document.getElementById('user-choice');
 const computerChoiceDisplay = document.getElementById('comp-choice');
 const finalWinnerBtn = document.getElementById('final-winner-btn');
 const resetBtn = document.getElementById('reset-btn');
+
+// Initialize High Score UI
+if (bestScoreElement) bestScoreElement.textContent = bestScore;
 
 const OPTIONS = ['rock', 'paper', 'scissors'];
 
@@ -47,10 +52,6 @@ const showResult = (userChoice, computerChoice, winner) => {
     userChoiceDisplay.textContent = formatChoice(userChoice);
     computerChoiceDisplay.textContent = formatChoice(computerChoice);
 
-    // Highlight selected choice
-    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
-    document.getElementById(userChoice).classList.add('selected');
-
     // Update message
     let message = '';
     let messageClass = '';
@@ -64,6 +65,14 @@ const showResult = (userChoice, computerChoice, winner) => {
             message = `You Win! ${formatChoice(userChoice)} beats ${formatChoice(computerChoice)}.`;
             userScore++;
             userScoreElement.textContent = userScore;
+            
+            // Check High Score
+            if (userScore > bestScore) {
+                bestScore = userScore;
+                localStorage.setItem('rpsBestScore', bestScore);
+                if (bestScoreElement) bestScoreElement.textContent = bestScore;
+            }
+            
             messageClass = 'win';
             break;
         case 'computer':
@@ -80,29 +89,57 @@ const showResult = (userChoice, computerChoice, winner) => {
 
 // Main game
 const playGame = (userChoice) => {
-    const computerChoice = getComputerChoice();
-    const winner = determineWinner(userChoice, computerChoice);
+    // Prevent playing while computer is already thinking or game has ended
+    if (msgElement.textContent === 'Computer is thinking...' || finalWinnerBtn.textContent === "Winner Declared!") return;
 
-    totalRounds++;
+    // Micro-animation: Computer thinking state
+    msgElement.textContent = 'Computer is thinking...';
+    msgElement.className = '';
+    userChoiceDisplay.textContent = formatChoice(userChoice);
+    computerChoiceDisplay.textContent = '...';
 
-    // Enable final winner button after minimum rounds
-    if (totalRounds >= MIN_ROUNDS_FOR_WINNER) {
-        finalWinnerBtn.disabled = false;
-    }
+    // Highlight user selection immediately
+    document.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+    document.getElementById(userChoice).classList.add('selected');
 
-    showResult(userChoice, computerChoice, winner);
+    // Artificial delay for premium game feel (600ms)
+    setTimeout(() => {
+        const computerChoice = getComputerChoice();
+        const winner = determineWinner(userChoice, computerChoice);
+
+        totalRounds++;
+
+        // Enable final winner button after minimum rounds
+        if (totalRounds >= MIN_ROUNDS_FOR_WINNER) {
+            finalWinnerBtn.disabled = false;
+        }
+
+        showResult(userChoice, computerChoice, winner);
+    }, 600);
 };
 
-// Event Listeners
+// Handle choice trigger (Mouse or Keyboard)
+const handleChoice = (choiceElement) => {
+    const choiceID = choiceElement.getAttribute('id');
+
+    // Click micro-animation
+    choiceElement.classList.add('clicked');
+    setTimeout(() => choiceElement.classList.remove('clicked'), 300);
+
+    playGame(choiceID);
+};
+
+// Event Listeners for choices
 choices.forEach(choice => {
-    choice.addEventListener('click', () => {
-        const choiceID = choice.getAttribute('id');
+    // Mouse Interaction
+    choice.addEventListener('click', () => handleChoice(choice));
 
-        // Click animation
-        choice.classList.add('clicked');
-        setTimeout(() => choice.classList.remove('clicked'), 300);
-
-        playGame(choiceID);
+    // Keyboard Accessibility Support (Enter & Space)
+    choice.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault(); // Prevent page scroll on Space
+            handleChoice(choice);
+        }
     });
 });
 
