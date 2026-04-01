@@ -148,6 +148,20 @@ img {
     text-align: center;
 }
 
+.streak-text {
+    font-size: 1rem;
+    color: #f472b6;
+    margin-top: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.streak-text span {
+    color: #ffffff;
+    font-size: 1.1rem;
+}
+
 .score p:first-child {
     font-size: 1.2rem;
     color: #94a3b8;
