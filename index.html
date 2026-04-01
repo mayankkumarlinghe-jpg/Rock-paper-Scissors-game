@@ -3,57 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play the interactive Rock Paper Scissors game against the computer.">
+    <meta name="author" content="Your Name">
     <title>Rock Paper Scissors</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1 id="heading">Rock Paper Scissors Game</h1>
+    <header>
+        <h1 id="heading">Rock Paper Scissors Game</h1>
+    </header>
 
-    <div class="choices">
-        <div class="choice" id="rock">
-            <img src="./images/rock.png" alt="Rock">
-        </div>
-        <div class="choice" id="paper">
-            <img src="./images/paper.png" alt="Paper">
-        </div>
-        <div class="choice" id="scissors">
-            <img src="./images/scissor.png" alt="Scissors">
-        </div>
-    </div>
+    <main>
+        <section class="choices" aria-label="Game Choices">
+            <div class="choice" id="rock" role="button" tabindex="0" aria-label="Rock">
+                <img src="./images/rock.png" alt="Rock">
+            </div>
+            <div class="choice" id="paper" role="button" tabindex="0" aria-label="Paper">
+                <img src="./images/paper.png" alt="Paper">
+            </div>
+            <div class="choice" id="scissors" role="button" tabindex="0" aria-label="Scissors">
+                <img src="./images/scissor.png" alt="Scissors">
+            </div>
+        </section>
 
-    <!-- Choice Display -->
-    <div class="choices-display">
-        <p>You chose: <span id="user-choice">-</span></p>
-        <p>Computer chose: <span id="comp-choice">-</span></p>
-    </div>
+        <!-- Choice Display -->
+        <section class="choices-display" aria-live="polite">
+            <p>You chose: <span id="user-choice">-</span></p>
+            <p>Computer chose: <span id="comp-choice">-</span></p>
+        </section>
 
-    <div class="score-board">
-        <div class="score">
-            <p>You</p>
-            <p class="score-number" id="user-score">0</p>
-        </div>
-        <div class="vs">:</div>
-        <div class="score">
-            <p>Computer</p>
-            <p class="score-number" id="computer-score">0</p>
-        </div>
-    </div>
+        <section class="score-board" aria-label="Score Board">
+            <div class="score">
+                <p>You</p>
+                <p class="score-number" id="user-score">0</p>
+            </div>
+            <div class="vs">:</div>
+            <div class="score">
+                <p>Computer</p>
+                <p class="score-number" id="computer-score">0</p>
+            </div>
+        </section>
 
-    <div class="msg-container">
-        <p id="msg">Play Your Move!</p>
-    </div>
+        <section class="msg-container" aria-live="polite">
+            <p id="msg">Play Your Move!</p>
+        </section>
 
-    <!-- Final Winner Button -->
-    <div class="winner-button-container">
-        <button id="final-winner-btn" class="final-winner-btn" disabled>
-            Show Final Winner
-        </button>
-    </div>
+        <!-- Actions -->
+        <section class="actions-container" aria-label="Game Controls">
+            <!-- Final Winner Button -->
+            <div class="winner-button-container">
+                <button id="final-winner-btn" class="final-winner-btn" disabled aria-label="Show Final Winner">
+                    Show Final Winner
+                </button>
+            </div>
 
-    <!-- Reset Button -->
-    <div class="reset-container">
-        <button id="reset-btn" class="reset-btn">Play Again (Reset Game)</button>
-    </div>
+            <!-- Reset Button -->
+            <div class="reset-container">
+                <button id="reset-btn" class="reset-btn" aria-label="Play Again">Play Again (Reset Game)</button>
+            </div>
+        </section>
+    </main>
 
     <script src="scripts.js"></script>
 </body>
